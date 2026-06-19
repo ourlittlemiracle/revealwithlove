@@ -790,6 +790,8 @@ async function submitVote() {
     localStorage.setItem('miracle_voted', JSON.stringify({ name, gender: selected, msg }));
     showVotedState(name, selected);
     spawnConfetti(selected);
+    // Refresh tally immediately so the new vote shows up at once
+    fetch(`${DB}/votes.json`).then(r => r.json()).then(data => updateTally(data || {})).catch(() => {});
 
   } catch(e) {
     err.textContent = 'Something went wrong. Please try again.';
@@ -857,14 +859,14 @@ function updateTally(snapshot) {
 
 function subscribeToVotes() {
   const url = `${DB}/votes.json`;
-  let retryDelay = 3000;
-  function connect() {
-    const es = new EventSource(url + '?accept=text/event-stream');
-    es.addEventListener('put',   e => { retryDelay = 3000; const d = JSON.parse(e.data); updateTally(d.data || {}); });
-    es.addEventListener('patch', () => fetch(url).then(r => r.json()).then(updateTally));
-    es.onerror = () => { es.close(); setTimeout(connect, retryDelay); retryDelay = Math.min(retryDelay * 1.5, 30000); };
+  function poll() {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => updateTally(data || {}))
+      .catch(() => {})
+      .finally(() => setTimeout(poll, 5000));
   }
-  connect();
+  poll();
 }
 
 (function init() {

@@ -374,14 +374,14 @@ function loadVotes(data) {
 
 function subscribeRealtime() {
   const url = `${DB}/votes.json`;
-  let retryDelay = 3000;
-  function connect() {
-    const es = new EventSource(url + '?accept=text/event-stream');
-    es.addEventListener('put',   e => { retryDelay=3000; const d=JSON.parse(e.data); loadVotes(d.data||null); });
-    es.addEventListener('patch', () => fetch(url).then(r=>r.json()).then(loadVotes));
-    es.onerror = () => { es.close(); setTimeout(connect, retryDelay); retryDelay=Math.min(retryDelay*1.5,30000); };
+  function poll() {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => loadVotes(data || null))
+      .catch(() => {})
+      .finally(() => setTimeout(poll, 5000));
   }
-  connect();
+  poll();
 }
 
 subscribeRealtime();
