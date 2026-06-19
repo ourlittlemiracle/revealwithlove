@@ -630,6 +630,7 @@ const DB = 'https://miracle-e40b7-default-rtdb.firebaseio.com';
 let selected = null;
 let hasVoted = false;
 let prevBoy = 0, prevGirl = 0;
+let cachedVotes = {};
 
 /* ── Spawn hero particles ── */
 (function spawnHeroParticles() {
@@ -769,11 +770,10 @@ async function submitVote() {
   btn.textContent = 'Casting prediction…';
 
   try {
-    const checkRes = await fetch(
-      `${DB}/votes.json?orderBy="nameLower"&equalTo="${encodeURIComponent(name.toLowerCase())}"&limitToFirst=1`
-    );
-    const existing = await checkRes.json();
-    if (existing && Object.keys(existing).length > 0) {
+    // Duplicate check client-side using live cached data (no Firebase index needed)
+    const nameLower = name.toLowerCase();
+    const alreadyVoted = Object.values(cachedVotes).some(v => v.nameLower === nameLower);
+    if (alreadyVoted) {
       err.textContent = '✨ ' + name + ' has already cast their prediction!';
       err.classList.add('show');
       btn.disabled = false;
@@ -784,7 +784,7 @@ async function submitVote() {
     await fetch(`${DB}/votes.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, nameLower: name.toLowerCase(), gender: selected, message: msg, timestamp: Date.now() })
+      body: JSON.stringify({ name, nameLower, gender: selected, message: msg, timestamp: Date.now() })
     });
 
     localStorage.setItem('miracle_voted', JSON.stringify({ name, gender: selected, msg }));
@@ -829,8 +829,9 @@ function animateCount(id, newVal, oldVal) {
 }
 
 function updateTally(snapshot) {
+  cachedVotes = snapshot || {};
   let boy = 0, girl = 0;
-  if (snapshot) Object.values(snapshot).forEach(v => { if (v.gender === 'boy') boy++; else if (v.gender === 'girl') girl++; });
+  Object.values(cachedVotes).forEach(v => { if (v.gender === 'boy') boy++; else if (v.gender === 'girl') girl++; });
   const total = boy + girl;
 
   animateCount('boyCount',  boy,  prevBoy);
