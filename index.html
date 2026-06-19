@@ -12,7 +12,6 @@
       background: linear-gradient(135deg, #fff8e7, #f8b500);
       color: #333;
       text-align: center;
-      overflow-x: hidden;
     }
     h1 {
       font-family: 'Playfair Display', serif;
@@ -42,9 +41,7 @@
       cursor: pointer;
       transition: transform 0.2s;
     }
-    button:hover {
-      transform: scale(1.05);
-    }
+    button:hover { transform: scale(1.05); }
     .bar-container {
       width: 90%;
       margin: 20px auto;
@@ -123,11 +120,11 @@
   <div id="revealText" class="reveal-text"></div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import confetti from "https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.module.mjs";
 
-  <script>
     // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyD6Z8Z7-J93wU3nh5703Mpinx3BkBG-SjM",
@@ -140,11 +137,11 @@
     };
 
     // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     // Submit Vote
-    function submitVote(prediction) {
+    window.submitVote = async function(prediction) {
       const name = document.getElementById('name').value.trim();
       const message = document.getElementById('message').value.trim();
 
@@ -153,17 +150,18 @@
         return;
       }
 
-      db.collection("votes").add({
-        name: name,
-        message: message,
-        prediction: prediction,
-        timestamp: new Date()
-      }).then(() => {
+      try {
+        await addDoc(collection(db, "votes"), {
+          name: name,
+          message: message,
+          prediction: prediction,
+          timestamp: new Date()
+        });
         alert("Thank you for your vote!");
         document.getElementById('voteForm').reset();
-      }).catch((error) => {
+      } catch (error) {
         console.error("Error adding vote: ", error);
-      });
+      }
     }
 
     // Update Results Bars
@@ -180,7 +178,7 @@
     }
 
     // Listen for live updates
-    db.collection("votes").onSnapshot((snapshot) => {
+    onSnapshot(collection(db, "votes"), (snapshot) => {
       let boyCount = 0;
       let girlCount = 0;
 
@@ -193,41 +191,3 @@
       updateBars(boyCount, girlCount);
 
       // Confetti burst on update
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    });
-
-    // Reveal Curtain
-    db.collection("settings").doc("reveal").onSnapshot((doc) => {
-      const data = doc.data();
-      if (data && data.revealGender) {
-        triggerReveal(data.revealGender);
-      }
-    });
-
-    function triggerReveal(gender) {
-      document.querySelector('.curtain.left').style.display = "block";
-      document.querySelector('.curtain.right').style.display = "block";
-
-      setTimeout(() => {
-        document.querySelector('.curtain.left').classList.add('open');
-        document.querySelector('.curtain.right').classList.add('open');
-      }, 100);
-
-      const text = document.getElementById('revealText');
-      text.textContent = "✨ It's a " + gender + "! ✨";
-      text.classList.add('show');
-
-      // Confetti blast
-      confetti({
-        particleCount: 200,
-        spread: 120,
-        origin: { y: 0.6 }
-      });
-    }
-  </script>
-</body>
-</html>
