@@ -73,6 +73,7 @@
       background: linear-gradient(135deg, #f8b500, #fff8e7);
       z-index: 999;
       transition: transform 2s ease;
+      display: none; /* hidden until reveal */
     }
     .curtain.left { left: 0; }
     .curtain.right { right: 0; }
@@ -208,8 +209,13 @@
     });
 
     function triggerReveal(gender) {
-      document.querySelector('.curtain.left').classList.add('open');
-      document.querySelector('.curtain.right').classList.add('open');
+      document.querySelector('.curtain.left').style.display = "block";
+      document.querySelector('.curtain.right').style.display = "block";
+
+      setTimeout(() => {
+        document.querySelector('.curtain.left').classList.add('open');
+        document.querySelector('.curtain.right').classList.add('open');
+      }, 100);
 
       const text = document.getElementById('revealText');
       text.textContent = "✨ It's a " + gender + "! ✨";
