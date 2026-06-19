@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Anish & Abiniya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --boy: #3a8fd4; --boy-light: #e6f3ff; --boy-mid: #90c8f0;
+    --girl: #d44090; --girl-light: #fde8f4; --girl-mid: #f0a0cc;
+    --gold: #c8a05a; --purple: #7a3fa8;
+    --dark: #1a1228; --text: #2a1f38; --muted: #8070a0; --bg: #f5f3fa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(160deg, #0d0620 0%, #1e0840 55%, #0d0620 100%);
+    padding: 44px 22px 38px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,160,90,0.45), transparent);
+  }
+  .hglow { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; }
+  .hglow.pink { width: 220px; height: 220px; background: #d44090; top: -70px; right: -50px; opacity: 0.22; animation: hbreathe 5s ease-in-out infinite alternate; }
+  .hglow.blue { width: 200px; height: 200px; background: #3a8fd4; bottom: -50px; left: -50px; opacity: 0.2;  animation: hbreathe 6s ease-in-out infinite alternate-reverse; }
+  @keyframes hbreathe { from { opacity: 0.12; transform: scale(0.9); } to { opacity: 0.28; transform: scale(1.1); } }
+
+  /* floating particles in header */
+  .hparticle {
+    position: absolute; pointer-events: none; opacity: 0;
+    animation: hpfloat linear infinite;
+    font-size: 10px; color: rgba(200,160,90,0.7);
+  }
+  @keyframes hpfloat {
+    0%   { opacity: 0;   transform: translateY(60px) scale(0.5); }
+    20%  { opacity: 0.8; }
+    80%  { opacity: 0.6; }
+    100% { opacity: 0;   transform: translateY(-30px) scale(1); }
+  }
+
+  .header-eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(200,160,90,0.7); margin-bottom: 12px;
+    animation: fadeup 0.7s ease both;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300; color: #fff; margin-bottom: 5px;
+    animation: fadeup 0.7s 0.1s ease both;
+  }
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; font-style: italic; color: rgba(200,160,90,0.6);
+    animation: fadeup 0.7s 0.2s ease both;
+  }
+  @keyframes fadeup { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* STATS */
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px; padding: 22px 16px 0;
+    animation: fadeup 0.6s 0.3s ease both;
+  }
+  .stat-card {
+    background: #fff; border-radius: 18px; padding: 18px 8px;
+    text-align: center; border: 0.5px solid #e0d8f0;
+    transition: transform 0.2s ease;
+  }
+  .stat-card:active { transform: scale(0.97); }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px; font-weight: 300; line-height: 1; margin-bottom: 5px;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .stat-num.bump { animation: sbump 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes sbump { 0% { transform:scale(1); } 50% { transform:scale(1.25); } 100% { transform:scale(1); } }
+  .stat-num.boy   { color: var(--boy); }
+  .stat-num.girl  { color: var(--girl); }
+  .stat-num.total { color: var(--purple); }
+  .stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+  /* BAR CARD */
+  .bar-section { padding: 18px 16px 0; animation: fadeup 0.6s 0.4s ease both; }
+  .bar-card {
+    background: linear-gradient(160deg,#1a0a2e,#2e1050);
+    border-radius: 22px; padding: 20px 18px; color: #fff;
+    box-shadow: 0 8px 36px rgba(26,10,60,0.18);
+    position: relative; overflow: hidden;
+  }
+  .bar-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,160,90,0.4), transparent);
+  }
+  .bar-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; font-style: italic;
+    color: rgba(200,160,90,0.8); margin-bottom: 16px; text-align: center;
+  }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-side { font-size: 11px; font-weight: 500; width: 36px; }
+  .bar-side.boy  { color: var(--boy-mid); }
+  .bar-side.girl { color: var(--girl-mid); }
+  .bar-bg { flex: 1; height: 13px; background: rgba(255,255,255,0.07); border-radius: 7px; overflow: hidden; }
+  .bar-fill-boy  { height: 100%; background: linear-gradient(90deg,#1e68c0,#60aaee); border-radius: 7px; transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
+  .bar-fill-girl { height: 100%; background: linear-gradient(90deg,#f080c0,#d44090); border-radius: 7px; transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
+  .bar-pct { font-size: 11px; color: rgba(255,255,255,0.45); width: 34px; text-align: right; }
+
+  /* LIST */
+  .list-section { padding: 24px 16px 44px; }
+  .list-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .list-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 600; color: var(--dark);
+  }
+  .list-count { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+
+  .filter-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .filter-btn {
+    flex: 1; padding: 9px 10px; border-radius: 11px;
+    border: 1.5px solid #e0d8f0; background: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+    color: var(--muted); cursor: pointer; text-align: center;
+    transition: all 0.2s ease;
+  }
+  .filter-btn:active { transform: scale(0.97); }
+  .filter-btn.active      { border-color: var(--purple); color: var(--purple); background: #f0e8ff; }
+  .filter-btn.active-boy  { border-color: var(--boy);   color: var(--boy);    background: var(--boy-light); }
+  .filter-btn.active-girl { border-color: var(--girl);  color: var(--girl);   background: var(--girl-light); }
+
+  .vote-row {
+    background: #fff; border-radius: 16px;
+    border: 0.5px solid #e8e0f4;
+    padding: 14px 16px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: flex-start;
+    animation: row-in 0.35s ease both;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .vote-row:active { transform: scale(0.99); }
+  @keyframes row-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .vote-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .vote-avatar.boy  { background: var(--boy-light); }
+  .vote-avatar.girl { background: var(--girl-light); }
+  .vote-body { flex: 1; min-width: 0; }
+  .vote-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .vote-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; font-style: italic; color: var(--muted);
+    margin-bottom: 4px; line-height: 1.4;
+    overflow: hidden; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .vote-time { font-size: 10px; color: #b0a0c0; letter-spacing: 0.4px; }
+  .vote-badge {
+    flex-shrink: 0; font-size: 10px; font-weight: 500;
+    padding: 4px 11px; border-radius: 20px; letter-spacing: 0.4px; margin-top: 2px;
+  }
+  .vote-badge.boy  { background: var(--boy-light);  color: var(--boy); }
+  .vote-badge.girl { background: var(--girl-light); color: var(--girl); }
+
+  .empty-state {
+    text-align: center; padding: 44px 20px;
+    color: var(--muted); display: none;
+  }
+  .empty-state-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+  .empty-state-text { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; }
+
+  .loading-state { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+
+  .export-btn {
+    width: 100%; margin-top: 16px; padding: 14px;
+    border-radius: 14px; border: 1.5px solid var(--purple);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--purple); cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .export-btn:hover   { background: #f0e8ff; }
+  .export-btn:active  { transform: scale(0.98); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header" id="adminHeader">
+  <div class="hglow pink"></div>
+  <div class="hglow blue"></div>
+  <div class="header-eyebrow">✦ Admin Panel ✦</div>
+  <div class="header-title">Little Wonder Tally</div>
+  <div class="header-sub">Anish & Abiniya's Baby Predictions</div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-num boy"   id="adm-boy">0</div>
+    <div class="stat-label">👦 Boy</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num girl"  id="adm-girl">0</div>
+    <div class="stat-label">👧 Girl</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num total" id="adm-total">0</div>
+    <div class="stat-label">Total</div>
+  </div>
+</div>
+
+<div class="bar-section">
+  <div class="bar-card">
+    <div class="bar-card-title">Prediction split</div>
+    <div class="bar-row">
+      <div class="bar-side boy">Boy</div>
+      <div class="bar-bg"><div class="bar-fill-boy"  id="adm-bar-boy"  style="width:50%"></div></div>
+      <div class="bar-pct" id="adm-pct-boy">—</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-side girl">Girl</div>
+      <div class="bar-bg"><div class="bar-fill-girl" id="adm-bar-girl" style="width:50%"></div></div>
+      <div class="bar-pct" id="adm-pct-girl">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="list-section">
+  <div class="list-header">
+    <div class="list-title">All predictions</div>
+    <div class="list-count" id="listCount">Loading…</div>
+  </div>
+  <div class="filter-row">
+    <div class="filter-btn active"  id="fAll"  onclick="setFilter('all')">All</div>
+    <div class="filter-btn"         id="fBoy"  onclick="setFilter('boy')">👦 Boy</div>
+    <div class="filter-btn"         id="fGirl" onclick="setFilter('girl')">👧 Girl</div>
+  </div>
+  <div id="voteList"><div class="loading-state">Loading predictions…</div></div>
+  <div class="empty-state" id="emptyState">
+    <span class="empty-state-icon">🌟</span>
+    <div class="empty-state-text">No predictions yet. The wonder awaits…</div>
+  </div>
+  <button class="export-btn" onclick="exportCSV()">⬇ Export as CSV</button>
+</div>
+
+<script>
+const DB = 'https://miracle-e40b7-default-rtdb.firebaseio.com';
+let allVotes = [];
+let activeFilter = 'all';
+let prevBoy = 0, prevGirl = 0, prevTotal = 0;
+
+/* spawn header particles */
+(function() {
+  const h = document.getElementById('adminHeader');
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'hparticle';
+    p.textContent = ['✦','✧','·'][Math.floor(Math.random()*3)];
+    p.style.cssText = 'left:'+(5+Math.random()*90)+'%;bottom:0;animation-duration:'+(4+Math.random()*5)+'s;animation-delay:'+(Math.random()*5)+'s;font-size:'+(7+Math.random()*8)+'px';
+    h.appendChild(p);
+  }
+})();
+
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  const m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  if (h < 24) return h + 'h ago';
+  return dy + 'd ago';
+}
+
+function bumpEl(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
+function updateStats(votes) {
+  const boy   = votes.filter(v => v.gender === 'boy').length;
+  const girl  = votes.filter(v => v.gender === 'girl').length;
+  const total = votes.length;
+  document.getElementById('adm-boy').textContent   = boy;
+  document.getElementById('adm-girl').textContent  = girl;
+  document.getElementById('adm-total').textContent = total;
+  if (boy !== prevBoy)     bumpEl('adm-boy');
+  if (girl !== prevGirl)   bumpEl('adm-girl');
+  if (total !== prevTotal) bumpEl('adm-total');
+  prevBoy = boy; prevGirl = girl; prevTotal = total;
+
+  if (total > 0) {
+    const bp = Math.round(boy / total * 100), gp = 100 - bp;
+    document.getElementById('adm-bar-boy').style.width  = bp + '%';
+    document.getElementById('adm-bar-girl').style.width = gp + '%';
+    document.getElementById('adm-pct-boy').textContent  = bp + '%';
+    document.getElementById('adm-pct-girl').textContent = gp + '%';
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderList(votes) {
+  const filtered = activeFilter === 'all' ? votes : votes.filter(v => v.gender === activeFilter);
+  const container = document.getElementById('voteList');
+  const empty     = document.getElementById('emptyState');
+  document.getElementById('listCount').textContent = filtered.length + ' votes';
+
+  if (!filtered.length) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const sorted = [...filtered].sort((a,b) => b.timestamp - a.timestamp);
+  container.innerHTML = sorted.map((v, i) => `
+    <div class="vote-row" style="animation-delay:${Math.min(i*0.04,0.4)}s">
+      <div class="vote-avatar ${v.gender}">${v.gender === 'boy' ? '👦' : '👧'}</div>
+      <div class="vote-body">
+        <div class="vote-name">${escHtml(v.name)}</div>
+        ${v.message ? `<div class="vote-msg">"${escHtml(v.message)}"</div>` : ''}
+        <div class="vote-time">${timeAgo(v.timestamp)}</div>
+      </div>
+      <div class="vote-badge ${v.gender}">${v.gender === 'boy' ? '👦 Boy' : '👧 Girl'}</div>
+    </div>
+  `).join('');
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.getElementById('fAll').className  = 'filter-btn' + (f==='all'  ? ' active'      : '');
+  document.getElementById('fBoy').className  = 'filter-btn' + (f==='boy'  ? ' active-boy'  : '');
+  document.getElementById('fGirl').className = 'filter-btn' + (f==='girl' ? ' active-girl' : '');
+  renderList(allVotes);
+}
+
+function exportCSV() {
+  if (!allVotes.length) { alert('No predictions to export yet!'); return; }
+  const rows = [['Name','Gender','Message','Timestamp']];
+  [...allVotes].sort((a,b)=>b.timestamp-a.timestamp).forEach(v => {
+    rows.push([
+      '"'+(v.name||'').replace(/"/g,'""')+'"',
+      v.gender,
+      '"'+(v.message||'').replace(/"/g,'""')+'"',
+      new Date(v.timestamp).toISOString()
+    ]);
+  });
+  const blob = new Blob([rows.map(r=>r.join(',')).join('\n')], { type:'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'miracle-predictions.csv';
+  a.click();
+}
+
+function loadVotes(data) {
+  allVotes = data ? Object.values(data) : [];
+  updateStats(allVotes);
+  renderList(allVotes);
+}
+
+function subscribeRealtime() {
+  const url = `${DB}/votes.json`;
+  let retryDelay = 3000;
+  function connect() {
+    const es = new EventSource(url + '?accept=text/event-stream');
+    es.addEventListener('put',   e => { retryDelay=3000; const d=JSON.parse(e.data); loadVotes(d.data||null); });
+    es.addEventListener('patch', () => fetch(url).then(r=>r.json()).then(loadVotes));
+    es.onerror = () => { es.close(); setTimeout(connect, retryDelay); retryDelay=Math.min(retryDelay*1.5,30000); };
+  }
+  connect();
+}
+
+subscribeRealtime();
+</script>
+</body>
+</html>
